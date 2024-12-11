@@ -6,4 +6,4 @@ def summ(a, b):
     time.sleep(1)
     return a + b
 
-print(summ(8, 1))
+print(summ(1, 6))
