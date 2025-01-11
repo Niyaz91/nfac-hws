@@ -1,5 +1,4 @@
 import unittest
-
 import hw
 
 class TestExercise(unittest.TestCase):
