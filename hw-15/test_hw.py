@@ -180,13 +180,13 @@ class TestExercise(unittest.TestCase):
     def test_school(self):
         school = hw.School()
         teacher = hw.Teacher("Mr. Smith", 40)
-        student = hw.Student("Alice", 12)
+        student = hw.Student2("Alice", 12)
         school.add_teacher(teacher)
         school.add_student(student)
         self.assertIn(teacher, school.teachers)
         self.assertIn(student, school.students)
-        self.assertIn(teacher, school.get_all())
-        self.assertIn(student, school.get_all())
+        self.assertIn(teacher, school.print_all())
+        self.assertIn(student, school.print_all())
 
     # Tests for Exercise 21: Card, Deck
     def test_deck(self):
