@@ -1,226 +1,271 @@
-from collections import Counter
+from typing import List, Any, Dict, Set, Generator
 
 """
-Exercise-1: Find missing elements
-Write a function "missing_elements(my_list: list) -> list" that takes a
-sorted list of integers and returns a list of missing integers in the range of the list.
+Exercise-1: List Comprehension to Squares
+Write a function "squares(n: int) -> List[int]" that uses a list comprehension to return a list of the squares of all numbers up to 'n'.
 
 Example:
-missing_elements([1, 2, 4, 6, 7]) -> [3, 5]
+squares(5) -> [0, 1, 4, 9, 16]
 """
 
 
-def missing_elements(my_list: list) -> list:
-    if not my_list:
-        return []
-
-    min_val = my_list[0]
-    max_val = my_list[-1]
-    full_range = set(range(min_val, max_val+1))
-    my_set = set(my_list)
-    missing = list(full_range-my_set)
-    return missing
+def squares(n: int):
+    return [i**2 for i in range(n)]
 
 
 """
-Exercise-2: Count occurrences
-Write a function "count_occurrences(my_list: list) -> dict" that takes a
-list of integers and returns a dictionary where keys are unique integers
-from the list and values are their counts in the list.
+Exercise-2: Set Comprehension with Filtering
+Write a function "unique_squares(numbers: List[int]) -> Set[int]" that uses a set comprehension to return the squares of the unique numbers from the input list.
 
 Example:
-count_occurrences([1, 2, 3, 1, 2, 4, 5, 4]) -> {1: 2, 2: 2, 3: 1, 4: 2, 5: 1}
+unique_squares([1, 2, 2, 3, 3, 3, 4, 4, 4, 4]) -> {1, 4, 9, 16}
 """
 
 
-def count_occurrences(my_list: list) -> dict:
-    count_occur = {}
-    for i in my_list:
-        if i in count_occur:
-            count_occur[i] += 1
-        else:
-            count_occur[i] = 1
-    return count_occur
+def unique_squares(numbers: List[int]) -> Set[int]:
+    return {i**2 for i in set(numbers)}
 
 
 """
-Exercise-4: Common elements
-Write a function "common_elements(list1: list, list2: list) -> list" that takes two
-lists of integers and returns a list of unique common elements.
+Exercise-3: Dictionary Comprehension to Count Characters
+Write a function "char_counts(text: str) -> Dict[str, int]" that uses a dictionary comprehension to count the occurrence of each character in a string.
 
 Example:
-common_elements([1, 2, 3, 4, 5], [3, 4, 5, 6, 7]) -> [3, 4, 5]
+char_counts("hello") -> {'h': 1, 'e': 1, 'l': 2, 'o': 1}
 """
 
 
-def common_elements(list1: list, list2: list) -> list:
-    uniq_el = list(set(list1) & set(list2))
-    return uniq_el
+def char_counts(text: str) -> Dict[str, int]:
+    return {char: text.count(char) for char in set(text) }
 
 
 """
-Exercise-5: Character frequency
-Write a function "char_frequency(my_string: str) -> dict" that takes a
-string and returns a dictionary with the frequency of each character in the string.
+Exercise-4: Nested List Comprehension
+Write a function "flatten(nested_list: List[List[Any]]) -> List[Any]" that uses a nested list comprehension to flatten a list of lists.
 
 Example:
-char_frequency('hello world') -> {'h': 1, 'e': 1, 'l': 3, 'o': 2, ' ': 1, 'w': 1, 'r': 1, 'd': 1}
+flatten([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) -> [1, 2, 3, 4, 5, 6, 7, 8, 9]
 """
 
 
-def char_frequency(my_string: str) -> dict:
-    frequency = Counter(my_string)
-    return dict(frequency)
+def flatten(nested_list: List[List[Any]]) -> List[Any]:
+    return [i for sublist in nested_list for i in sublist]
 
 
 """
-Exercise-6: Unique words
-Write a function "unique_words(my_string: str) -> int" that takes a
-string and returns the number of unique words in the string.
+Exercise-5: Generator Expression to Yield Squares
+Write a function "squares_gen(n: int) -> Generator[int]" that uses a generator expression to yield the squares of all numbers up to 'n'.
 
 Example:
-unique_words('hello world hello') -> 2
+list(squares_gen(5)) -> [0, 1, 4, 9, 16]
 """
 
 
-def unique_words(my_string: str) -> int:
-    words = my_string.split()
-    unique_words_set = set (words)
-    return len(unique_words_set)
+def squares_gen(n: int) -> Generator[int, None, None]:
+    return (i**2 for i in range(n))
 
 
 """
-Exercise-7: Word frequency
-Write a function "word_frequency(my_string: str) -> dict" that takes a
-string and returns a dictionary with the frequency of each word in the string.
+Exercise-6: Set Comprehension to Find Odd Squares
+Write a function "odd_squares(n: int) -> Set[int]" that uses a set comprehension to find the squares of all odd numbers up to 'n'.
 
 Example:
-word_frequency('hello world hello') -> {'hello': 2, 'world': 1}
+odd_squares(10) -> {1, 9, 25, 49, 81}
 """
 
 
-def word_frequency(my_string: str) -> dict:
-    words = my_string.split()
-    defaultdict = {}
-    for word in words:
-        if word in defaultdict:
-            defaultdict[word] +=1
-        else:
-            defaultdict[word] = 1
-    return defaultdict
+def odd_squares(n: int) -> set[int]:
+    if n ==1:
+        return {1}
+    return {i**2 for i in range(n) if i % 2 != 0}
 
 
 """
-Exercise-8: Count elements in range
-Write a function "count_in_range(my_list: list, start: int, end: int) -> int" that
-takes a list of integers and two integers as range boundaries and
-returns the count of unique elements within that range in the list.
+Exercise-7: Dictionary Comprehension to Map Indices
+Write a function "index_map(text: str) -> Dict[str, int]" that uses a dictionary comprehension to map each character in a string to its index.
 
 Example:
-count_in_range([1, 2, 3, 4, 5, 4, 3, 2, 1], 2, 4) -> 3
+index_map("hello") -> {'h': 0, 'e': 1, 'l': 3, 'o': 4}
 """
 
 
-def count_in_range(my_list: list, start: int, end: int) -> int:
-    uniq_elem = {i for i in my_list if start <= i <=end}
-    return len(uniq_elem)
+def index_map(text: str) -> dict[str, int]:
+    return {char: i for i, char in enumerate(text)}
 
 
 """
-Exercise-9: Swap dictionary keys and values
-Write a function "swap_dict(d: dict) -> dict" that takes a dictionary
-and returns a new dictionary where keys become values and values become keys.
-if you face duplicates, the first key should be saved.
+Exercise-8: Nested Set Comprehension
+Write a function "unique_values(nested_list: List[List[Any]]) -> Set[Any]" that uses a nested set comprehension to find the unique values in a nested list.
 
 Example:
-swap_dict({1: 'a', 2: 'b', 3: 'c'}) -> {'a': 1, 'b': 2, 'c': 3}
+unique_values([[1, 2, 3], [2, 3, 4], [3, 4, 5]]) -> {1, 2, 3, 4, 5}
 """
 
 
-def swap_dict(d: dict) -> dict:
-    new_dict = {}
-    for key, value in d.items():
-        if value not in new_dict:
-            new_dict[value] = key
-
-    return new_dict
+def unique_values(nested_list: List[List[Any]]) -> Set[Any]:
+    return {i for sublist in nested_list for i in sublist}
 
 
 """
-Exercise-10: Subset check
-Write a function "is_subset(set1: set, set2: set) -> bool" that takes two
-sets and returns True if set2 is a subset of set1, and False otherwise.
+Exercise-9: Fibonacci Sequence with Generators
+Write a function "fibonacci_gen(n: int) -> Generator[int]" that uses a generator to yield the Fibonacci sequence up to the nth term.
 
 Example:
-is_subset({1, 2, 3, 4, 5}, {3, 4, 5}) -> True
+list(fibonacci_gen(10)) -> [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
 """
 
 
-def is_subset(set1: set, set2: set) -> bool:
-    return set2.issubset(set1)
+def fibonacci_gen(n: int) -> Generator[int, None, None]:
+    a, b = 0, 1
+    for _ in range(n):
+        yield a
+        a, b = b, a + b
 
 
 """
-Exercise-11: Intersection of lists
-Write a function "list_intersection(list1: list, list2: list) -> list" that takes two
-lists and returns a list of unique elements that are in both lists.
+Exercise-10: Dictionary Comprehension to Invert a Dictionary
+Write a function "invert_dict(d: Dict[Any, Any]) -> Dict[Any, Any]" that uses a dictionary comprehension to invert a dictionary.
 
 Example:
-list_intersection([1, 2, 3, 4, 5], [3, 4, 5, 6, 7]) -> [3, 4, 5]
+invert_dict({'a': 1, 'b': 2, 'c': 3}) -> {1: 'a', 2: 'b', 3: 'c'}
 """
 
 
-def list_intersection(list1: list, list2: list) -> list:
-    intersection = set(list1).intersection(set(list2))
-    return list(intersection)
+def invert_dict(d: Dict[Any, Any]) -> Dict[Any, Any]:
+    return {v: k for k, v in d.items()}
 
 
 """
-Exercise-12: Union of lists
-Write a function "list_union(list1: list, list2: list) -> list" that takes two
-lists and returns a list of unique elements that are in either of the lists.
+Exercise-11: Prime Numbers with List Comprehension
+Write a function "primes(n: int) -> List[int]" that uses a list comprehension to return a list of all prime numbers up to 'n'.
 
 Example:
-list_union([1, 2, 3, 4, 5], [3, 4, 5, 6, 7]) -> [1, 2, 3, 4, 5, 6, 7]
+primes(10) -> [2, 3, 5, 7]
 """
 
 
-def list_union(list1: list, list2: list) -> list:
-    united_list = set(list1).union(set(list2))
-    return list(united_list)
+def primes(n: int) -> List[int]:
+    return [x for x in range(2, n+1) if all(x % i != 0 for i in range(2, x))]
 
 
 """
-Exercise-13: Most frequent element
-Write a function "most_frequent(my_list: list) -> int" that takes a
-list of integers and returns the most frequent element in the list.
+Exercise-12: Set Comprehension to Intersect Sets
+Write a function "intersection(sets: List[Set[Any]]) -> Set[Any]" that uses a set comprehension to return the intersection of a list of sets.
 
 Example:
-most_frequent([1, 2, 3, 1, 2, 4, 5, 4, 1]) -> 1
+intersection([{1, 2, 3}, {2, 3, 4}, {3, 4, 5}]) -> {3}
 """
 
 
-def most_frequent(my_list: list) -> int:
-    if not my_list:
-        return None
-    count = Counter(my_list)
-    most_freq_el = count.most_common(1)[0][0]
-    return most_freq_el
+def intersection(sets: List[Set[Any]]) -> Set[Any]:
+    return sets[0].intersection(*sets[1:])
 
 
 """
-Exercise-14: Least frequent element
-Write a function "least_frequent(my_list: list) -> int" that takes a
-list of integers and returns the least frequent element in the list.
+Exercise-13: Generator Expression to Yield Factorials
+Write a function "factorials_gen(n: int) -> Generator[int]" that uses a generator expression to yield the factorials of all numbers up to 'n'.
 
 Example:
-least_frequent([1, 2, 3, 1, 2, 4, 5, 4, 1]) -> 3
+list(factorials_gen(5)) -> [1, 2, 6, 24, 120]
 """
 
 
-def least_frequent(my_list: list) -> int:
-    if not my_list:
-        return None
-    count = Counter(my_list)
-    least_freq_el = min(count, key=lambda x: (count[x], my_list.index(x)))
-    return least_freq_el
+def factorials_gen(n: int) -> Generator[int, None, None]:
+    fact = 1
+    for i in range(n):
+        if i > 0:
+            fact *= i
+        yield fact
+
+
+"""
+Exercise-14: Dictionary Comprehension to Map Strings to Lengths
+Write a function "str_lengths(strings: List[str]) -> Dict[str, int]" that uses a dictionary comprehension to map strings to their lengths.
+
+Example:
+str_lengths(['hello', 'world', 'python']) -> {'hello': 5, 'world': 5, 'python': 6}
+"""
+
+
+def str_lengths(strings: List[str]) -> Dict[str, int]:
+    return {x: len(x) for x in strings}
+
+
+"""
+Exercise-15: Nested List Comprehension to Transpose Matrix
+Write a function "transpose(matrix: List[List[Any]]) -> List[List[Any]]" that uses a nested list comprehension to transpose a matrix.
+
+Example:
+transpose([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) -> [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
+"""
+
+
+def transpose(matrix: List[List[Any]]) -> List[List[Any]]:
+    return [[matrix [i][j] for i in range(len(matrix))] for j in range(len(matrix[0]))]
+
+
+"""
+Exercise-16: Generator to Yield Reversed List
+Write a function "reverse_gen(lst: List[Any]) -> Generator[Any]" that returns a generator which yields elements from the list in reverse order.
+
+Example:
+list(reverse_gen([1, 2, 3, 4, 5])) -> [5, 4, 3, 2, 1]
+"""
+
+
+def reverse_gen(lst: List[Any]) -> Generator[Any, None, None]:
+    for i in reversed(lst):
+        yield i
+
+
+"""
+Exercise-17: Dictionary Comprehension to Group By Length
+Write a function "group_by_length(words: List[str]) -> Dict[int, List[str]]" that uses a dictionary comprehension to group words by their length.
+
+Example:
+group_by_length(['hello', 'world', 'python', 'is', 'fun']) -> {5: ['hello', 'world'], 6: ['python'], 2: ['is'], 3: ['fun']}
+"""
+
+
+def group_by_length(words: List[str]) -> Dict[int, List[str]]:
+    return {lenght: [word for word in words if len(word) == lenght] for lenght in set(len(word) for word in words)}
+
+
+"""
+Exercise-18: Set Comprehension to Find Common Elements
+Write a function "common_elements(lists: List[List[Any]]) -> Set[Any]" that uses a set comprehension to find the common elements in a list of lists.
+
+Example:
+common_elements([[1, 2, 3], [2, 3, 4], [3, 4, 5]]) -> {3}
+"""
+
+
+def common_elements(lists: List[List[Any]]) -> Set[Any]:
+    return set(lists[0]).intersection(*map(set, lists[1:]))
+
+
+"""
+Exercise-19: Generator Expression to Yield Primes
+Write a function "primes_gen(n: int) -> Generator[int]" that uses a generator expression to yield all prime numbers up to 'n'.
+
+Example:
+list(primes_gen(10)) -> [2, 3, 5, 7]
+"""
+
+
+def primes_gen(n: int) -> Generator[int, None, None]:
+    return (x for x in range(2, n + 1) if all(x % i != 0 for i in range(2, x)))
+
+
+"""
+Exercise-20: Dictionary Comprehension to Convert List to Dict
+Write a function "list_to_dict(lst: List[Any]) -> Dict[int, Any]" that uses a dictionary comprehension to convert a list into a dictionary where the keys are the indices of the list elements.
+
+Example:
+list_to_dict(['a', 'b', 'c']) -> {0: 'a', 1: 'b', 2: 'c'}
+"""
+
+
+def list_to_dict(lst: List[Any]) -> Dict[int, Any]:
+    return {i: keys for i, keys in enumerate(lst)}
+
