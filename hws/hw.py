@@ -4,14 +4,12 @@ Write a function "operation(func, x: int, y: int) -> int" that takes in a functi
 Example:
 def multiply(a, b):
     return a * b
-operation(multiply, 5, 3) -> 15
-"""
+operation(multiply, 5, 3) -> 15"""
 
 def operation(func, x: int, y: int) -> int:
     return func (x,y)
 
-"""
-Exercise-2: Implement Map Function
+"""Exercise-2: Implement Map Function
 Write a function "my_map(func, my_list: list) -> list" that mimics the built-in Python 'map' function. It should take a function and a list as input, applying the function to each element of the list.
 Example:
 my_map(lambda x: x**2, [1, 2, 3, 4]) -> [1, 4, 9, 16]
@@ -53,7 +51,11 @@ Example:
 @timeit_decorator
 def sample_func():
     return [i**2 for i in range(10000)]
+
+def squares(n: int):
+    return [i**2 for i in range(n)]
 """
+
 import time
 
 def timeit_decorator(func):
@@ -64,6 +66,7 @@ def timeit_decorator(func):
         print(f"Execution time of {func.__name__}: {end_time-start_time:6f} seconds")
         return result
     return wrapper
+
 
 """
 Exercise-6: Function Composition
@@ -84,6 +87,7 @@ def compose(*funcs):
             result = func(result)
         return result
     return composed_func
+
 
 
 """
@@ -108,6 +112,7 @@ Write a function "factorial_reduce(n: int) -> int" that uses `reduce` to compute
 Example:
 factorial_reduce(5) -> 120
 """
+
 from functools import reduce
 
 
@@ -141,14 +146,11 @@ Implement your own version of Python's 'reduce' function "my_reduce(func, iterab
 Example:
 my_reduce(lambda x, y: x*y, [1, 2, 3, 4]) -> 24
 """
-
 def my_reduce(func, iterable, initializer=None):
     it = iter(iterable)
     accumulator = next (it)
-
     for item in it:
         accumulator =func(accumulator, item)
-
     return accumulator
 
 """
@@ -233,7 +235,6 @@ Write a function "recursive_sum(my_list: list) -> int" that recursively computes
 Example:
 recursive_sum([1, 2, 3, 4, 5]) -> 15
 """
-
 def recursive_sum(my_list: list) -> int:
     if not my_list:
         return 0
