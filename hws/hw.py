@@ -1,271 +1,252 @@
-from typing import List, Any, Dict, Set, Generator
-
 """
-Exercise-1: List Comprehension to Squares
-Write a function "squares(n: int) -> List[int]" that uses a list comprehension to return a list of the squares of all numbers up to 'n'.
-
+Exercise-1: First-class Function Operation
+Write a function "operation(func, x: int, y: int) -> int" that takes in a function 'func' and two integers, 'x' and 'y'. Apply the function to the two numbers and return the result. 
 Example:
-squares(5) -> [0, 1, 4, 9, 16]
+def multiply(a, b):
+    return a * b
+operation(multiply, 5, 3) -> 15"""
+
+def operation(func, x: int, y: int) -> int:
+    return func (x,y)
+
+"""Exercise-2: Implement Map Function
+Write a function "my_map(func, my_list: list) -> list" that mimics the built-in Python 'map' function. It should take a function and a list as input, applying the function to each element of the list.
+Example:
+my_map(lambda x: x**2, [1, 2, 3, 4]) -> [1, 4, 9, 16]
 """
 
+def my_map(func, my_list: list) -> list:
+    return [func(x) for x in my_list]
+
+
+"""
+Exercise-3: Lambda Function with Filter
+Write a function "filter_even_numbers(numbers: list) -> list" that uses 'filter' and a lambda function to filter out all even numbers from the list.
+Example:
+filter_even_numbers([1, 2, 3, 4, 5, 6, 7, 8]) -> [1, 3, 5, 7]
+"""
+
+def filter_even_numbers(numbers: list) -> list:
+    return list(filter (lambda x: x%2!=0, numbers))
+
+
+"""
+Exercise-4: Recursive Factorial
+Write a function "recursive_factorial(n: int) -> int" that calculates the factorial of a number recursively.
+Example:
+recursive_factorial(5) -> 120
+"""
+
+def recursive_factorial(n: int) -> int:
+    if n == 1:
+        return n
+    else:
+        return n*recursive_factorial(n-1)
+
+
+"""
+Exercise-5: Decorator for Timing
+Write a decorator function "timeit_decorator(func)" that prints the time taken by the function to execute.
+Example:
+@timeit_decorator
+def sample_func():
+    return [i**2 for i in range(10000)]
 
 def squares(n: int):
     return [i**2 for i in range(n)]
+"""
+
+import time
+
+def timeit_decorator(func):
+    def wrapper (*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        print(f"Execution time of {func.__name__}: {end_time-start_time:6f} seconds")
+        return result
+    return wrapper
 
 
 """
-Exercise-2: Set Comprehension with Filtering
-Write a function "unique_squares(numbers: List[int]) -> Set[int]" that uses a set comprehension to return the squares of the unique numbers from the input list.
-
+Exercise-6: Function Composition
+Write a function "compose(*funcs)" that takes a series of functions and returns a new function that composes them. The returned function should take an input and apply each function to the result of the previous function.
 Example:
-unique_squares([1, 2, 2, 3, 3, 3, 4, 4, 4, 4]) -> {1, 4, 9, 16}
+def double(x):
+    return 2 * x
+def square(x):
+    return x ** 2
+new_func = compose(double, square)
+new_func(3) -> 36
 """
 
+def compose(*funcs):
+    def composed_func (input_value):
+        result = input_value
+        for func in funcs:
+            result = func(result)
+        return result
+    return composed_func
 
-def unique_squares(numbers: List[int]) -> Set[int]:
-    return {i**2 for i in set(numbers)}
 
 
 """
-Exercise-3: Dictionary Comprehension to Count Characters
-Write a function "char_counts(text: str) -> Dict[str, int]" that uses a dictionary comprehension to count the occurrence of each character in a string.
-
+Exercise-7: Partial Application
+Write a function "partial(func, *args)" that implements partial application. The function should return a new function that when called will return the result of applying the input function to the provided arguments, followed by the new arguments.
 Example:
-char_counts("hello") -> {'h': 1, 'e': 1, 'l': 2, 'o': 1}
+def add_three_numbers(a, b, c):
+    return a + b + c
+add_five_and_six = partial(add_three_numbers, 5, 6)
+add_five_and_six(7) -> 18
 """
 
-
-def char_counts(text: str) -> Dict[str, int]:
-    return {char: text.count(char) for char in set(text) }
+def partial(func, *args):
+    def partial_func (*new_args):
+        return func(*args, *new_args)
+    return partial_func
 
 
 """
-Exercise-4: Nested List Comprehension
-Write a function "flatten(nested_list: List[List[Any]]) -> List[Any]" that uses a nested list comprehension to flatten a list of lists.
-
+Exercise-8: Reduce to Compute Factorial
+Write a function "factorial_reduce(n: int) -> int" that uses `reduce` to compute the factorial of an integer.
 Example:
-flatten([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) -> [1, 2, 3, 4, 5, 6, 7, 8, 9]
+factorial_reduce(5) -> 120
 """
 
+from functools import reduce
 
-def flatten(nested_list: List[List[Any]]) -> List[Any]:
-    return [i for sublist in nested_list for i in sublist]
 
+def factorial_reduce(n: int) -> int:
+    return reduce(lambda x,y: x*y, range(1, n+1),1)
 
 """
-Exercise-5: Generator Expression to Yield Squares
-Write a function "squares_gen(n: int) -> Generator[int]" that uses a generator expression to yield the squares of all numbers up to 'n'.
-
+Exercise-9: Function Memoization
+Write a function "memoize(func)" that takes a function and returns a memoized version of the function. The memoized version should cache the results of the function so that the next time it's called with the same arguments, it returns the cached value instead of calculating the result again.
 Example:
-list(squares_gen(5)) -> [0, 1, 4, 9, 16]
+def expensive_function(x):
+    return x ** x  # expensive calculation
+memoized_function = memoize(expensive_function)
+memoized_function(5)  # -> This will take some time to compute
+memoized_function(5)  # -> This will return the cached result
 """
 
-
-def squares_gen(n: int) -> Generator[int, None, None]:
-    return (i**2 for i in range(n))
+def memoize(func):
+    cache = {}
+    def memoized_func(*args):
+        if args in cache:
+            return cache[args]
+        result = func(*args)
+        cache[args] = result
+        return result
 
 
 """
-Exercise-6: Set Comprehension to Find Odd Squares
-Write a function "odd_squares(n: int) -> Set[int]" that uses a set comprehension to find the squares of all odd numbers up to 'n'.
-
+Exercise-10: Custom Reduce Function
+Implement your own version of Python's 'reduce' function "my_reduce(func, iterable, initializer=None)".
 Example:
-odd_squares(10) -> {1, 9, 25, 49, 81}
+my_reduce(lambda x, y: x*y, [1, 2, 3, 4]) -> 24
 """
-
-
-def odd_squares(n: int) -> set[int]:
-    if n ==1:
-        return {1}
-    return {i**2 for i in range(n) if i % 2 != 0}
-
+def my_reduce(func, iterable, initializer=None):
+    it = iter(iterable)
+    accumulator = next (it)
+    for item in it:
+        accumulator =func(accumulator, item)
+    return accumulator
 
 """
-Exercise-7: Dictionary Comprehension to Map Indices
-Write a function "index_map(text: str) -> Dict[str, int]" that uses a dictionary comprehension to map each character in a string to its index.
-
+Exercise-11: Lambda Function Sort
+Write a function "sort_by_last_letter(words: list) -> list" that sorts a list of words in ascending order based on the last letter of each word. Use a lambda function.
 Example:
-index_map("hello") -> {'h': 0, 'e': 1, 'l': 3, 'o': 4}
+sort_by_last_letter(['apple', 'banana', 'cherry', 'date']) -> ['banana', 'apple', 'date', 'cherry']
 """
 
-
-def index_map(text: str) -> dict[str, int]:
-    return {char: i for i, char in enumerate(text)}
-
+def sort_by_last_letter(words: list) -> list:
+    return sorted(words, key=lambda word: word[-1])
 
 """
-Exercise-8: Nested Set Comprehension
-Write a function "unique_values(nested_list: List[List[Any]]) -> Set[Any]" that uses a nested set comprehension to find the unique values in a nested list.
-
+Exercise-12: Recursive List Reversal
+Write a function "recursive_reverse(my_list: list) -> list" that reverses a list using recursion.
 Example:
-unique_values([[1, 2, 3], [2, 3, 4], [3, 4, 5]]) -> {1, 2, 3, 4, 5}
+recursive_reverse([1, 2, 3, 4, 5]) -> [5, 4, 3, 2, 1]
 """
 
-
-def unique_values(nested_list: List[List[Any]]) -> Set[Any]:
-    return {i for sublist in nested_list for i in sublist}
-
+def recursive_reverse(my_list: list) -> list:
+    if not my_list:
+        return my_list
+    return recursive_reverse(my_list[1:]) + [my_list[0]]
 
 """
-Exercise-9: Fibonacci Sequence with Generators
-Write a function "fibonacci_gen(n: int) -> Generator[int]" that uses a generator to yield the Fibonacci sequence up to the nth term.
-
+Exercise-13: Decorator for Function Counting
+Write a decorator function "count_calls(func)" that counts the number of times a function is called.
 Example:
-list(fibonacci_gen(10)) -> [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+@count_calls
+def test_function():
+    return
+test_function()
+test_function()
+# Output: 'test_function' was called 2 times.
 """
 
+def count_calls(func):
+    def wrapper(*args, **kwargs):
+        wrapper.call_count += 1
+        return func(*args, **kwargs)
 
-def fibonacci_gen(n: int) -> Generator[int, None, None]:
-    a, b = 0, 1
-    for _ in range(n):
-        yield a
-        a, b = b, a + b
+    wrapper.call_count = 0
+    return wrapper
 
 
 """
-Exercise-10: Dictionary Comprehension to Invert a Dictionary
-Write a function "invert_dict(d: Dict[Any, Any]) -> Dict[Any, Any]" that uses a dictionary comprehension to invert a dictionary.
-
+Exercise-14: Use reduce to Find the Maximum Number
+Write a function "find_max(numbers: list) -> int" that uses reduce to find the maximum number in a list.
 Example:
-invert_dict({'a': 1, 'b': 2, 'c': 3}) -> {1: 'a', 2: 'b', 3: 'c'}
+find_max([1, 2, 3, 4, 5]) -> 5
 """
 
-
-def invert_dict(d: Dict[Any, Any]) -> Dict[Any, Any]:
-    return {v: k for k, v in d.items()}
-
+def find_max(numbers: list) -> int:
+    return reduce(lambda x, y: x if x > y else y, numbers)
 
 """
-Exercise-11: Prime Numbers with List Comprehension
-Write a function "primes(n: int) -> List[int]" that uses a list comprehension to return a list of all prime numbers up to 'n'.
-
+Exercise-15: Use filter and lambda to Remove Elements
+Write a function "remove_elements(my_list: list, element) -> list" that uses filter and a lambda function to remove all instances of a specific element from a list.
 Example:
-primes(10) -> [2, 3, 5, 7]
+remove_elements([1, 2, 3, 2, 4, 2, 5], 2) -> [1, 3, 4, 5]
 """
 
-
-def primes(n: int) -> List[int]:
-    return [x for x in range(2, n+1) if all(x % i != 0 for i in range(2, x))]
-
+def remove_elements(my_list: list, element):
+    return list(filter(lambda x: x != element, my_list))
 
 """
-Exercise-12: Set Comprehension to Intersect Sets
-Write a function "intersection(sets: List[Set[Any]]) -> Set[Any]" that uses a set comprehension to return the intersection of a list of sets.
-
+Exercise-16: Higher-Order Function for Repeats
+Write a function "repeat(n: int)" that returns a function. The returned function should take a string input and repeat it `n` times.
 Example:
-intersection([{1, 2, 3}, {2, 3, 4}, {3, 4, 5}]) -> {3}
+repeat_three_times = repeat(3)
+repeat_three_times('hello') -> 'hellohellohello'
 """
 
-
-def intersection(sets: List[Set[Any]]) -> Set[Any]:
-    return sets[0].intersection(*sets[1:])
-
+def repeat(n: int):
+    def inner(s: str) -> str:
+        return s * n
+    return inner
 
 """
-Exercise-13: Generator Expression to Yield Factorials
-Write a function "factorials_gen(n: int) -> Generator[int]" that uses a generator expression to yield the factorials of all numbers up to 'n'.
-
+Exercise-17: Recursive List Sum
+Write a function "recursive_sum(my_list: list) -> int" that recursively computes the sum of a list of integers.
 Example:
-list(factorials_gen(5)) -> [1, 2, 6, 24, 120]
+recursive_sum([1, 2, 3, 4, 5]) -> 15
 """
-
-
-def factorials_gen(n: int) -> Generator[int, None, None]:
-    fact = 1
-    for i in range(n):
-        if i > 0:
-            fact *= i
-        yield fact
+def recursive_sum(my_list: list) -> int:
+    if not my_list:
+        return 0
+    return my_list[0] + recursive_sum(my_list[1:])
 
 
 """
-Exercise-14: Dictionary Comprehension to Map Strings to Lengths
-Write a function "str_lengths(strings: List[str]) -> Dict[str, int]" that uses a dictionary comprehension to map strings to their lengths.
-
+Exercise-18: Map with Multiple Lists
+Write a function "add_two_lists(list1: list, list2: list) -> list" that uses `map` and `lambda` to add together corresponding elements of two lists.
 Example:
-str_lengths(['hello', 'world', 'python']) -> {'hello': 5, 'world': 5, 'python': 6}
+add_two_lists([1, 2, 3], [4, 5, 6]) -> [5, 7, 9]
 """
 
-
-def str_lengths(strings: List[str]) -> Dict[str, int]:
-    return {x: len(x) for x in strings}
-
-
-"""
-Exercise-15: Nested List Comprehension to Transpose Matrix
-Write a function "transpose(matrix: List[List[Any]]) -> List[List[Any]]" that uses a nested list comprehension to transpose a matrix.
-
-Example:
-transpose([[1, 2, 3], [4, 5, 6], [7, 8, 9]]) -> [[1, 4, 7], [2, 5, 8], [3, 6, 9]]
-"""
-
-
-def transpose(matrix: List[List[Any]]) -> List[List[Any]]:
-    return [[matrix [i][j] for i in range(len(matrix))] for j in range(len(matrix[0]))]
-
-
-"""
-Exercise-16: Generator to Yield Reversed List
-Write a function "reverse_gen(lst: List[Any]) -> Generator[Any]" that returns a generator which yields elements from the list in reverse order.
-
-Example:
-list(reverse_gen([1, 2, 3, 4, 5])) -> [5, 4, 3, 2, 1]
-"""
-
-
-def reverse_gen(lst: List[Any]) -> Generator[Any, None, None]:
-    for i in reversed(lst):
-        yield i
-
-
-"""
-Exercise-17: Dictionary Comprehension to Group By Length
-Write a function "group_by_length(words: List[str]) -> Dict[int, List[str]]" that uses a dictionary comprehension to group words by their length.
-
-Example:
-group_by_length(['hello', 'world', 'python', 'is', 'fun']) -> {5: ['hello', 'world'], 6: ['python'], 2: ['is'], 3: ['fun']}
-"""
-
-
-def group_by_length(words: List[str]) -> Dict[int, List[str]]:
-    return {lenght: [word for word in words if len(word) == lenght] for lenght in set(len(word) for word in words)}
-
-
-"""
-Exercise-18: Set Comprehension to Find Common Elements
-Write a function "common_elements(lists: List[List[Any]]) -> Set[Any]" that uses a set comprehension to find the common elements in a list of lists.
-
-Example:
-common_elements([[1, 2, 3], [2, 3, 4], [3, 4, 5]]) -> {3}
-"""
-
-
-def common_elements(lists: List[List[Any]]) -> Set[Any]:
-    return set(lists[0]).intersection(*map(set, lists[1:]))
-
-
-"""
-Exercise-19: Generator Expression to Yield Primes
-Write a function "primes_gen(n: int) -> Generator[int]" that uses a generator expression to yield all prime numbers up to 'n'.
-
-Example:
-list(primes_gen(10)) -> [2, 3, 5, 7]
-"""
-
-
-def primes_gen(n: int) -> Generator[int, None, None]:
-    return (x for x in range(2, n + 1) if all(x % i != 0 for i in range(2, x)))
-
-
-"""
-Exercise-20: Dictionary Comprehension to Convert List to Dict
-Write a function "list_to_dict(lst: List[Any]) -> Dict[int, Any]" that uses a dictionary comprehension to convert a list into a dictionary where the keys are the indices of the list elements.
-
-Example:
-list_to_dict(['a', 'b', 'c']) -> {0: 'a', 1: 'b', 2: 'c'}
-"""
-
-
-def list_to_dict(lst: List[Any]) -> Dict[int, Any]:
-    return {i: keys for i, keys in enumerate(lst)}
-
+def add_two_lists(list1: list, list2: list) -> list:
+    return list(map(lambda x,y: x+y, list1, list2))
