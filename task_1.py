@@ -15,8 +15,6 @@ def application(environ, start_response):
         ('Content-Length', str(len(response_body)))
     ]
 
-    # Отправляем статус и заголовки
     start_response(status, response_headers)
 
-    # Возвращаем тело ответа
     return [response_body.encode('utf-8')]
