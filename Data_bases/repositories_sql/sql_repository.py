@@ -3,7 +3,7 @@ import asyncio
 
 from unicodedata import category
 
-from base_repository import BaseRepository
+from Data_bases.repositories_sql.base_repository import BaseRepository
 
 class SQLRepository(BaseRepository):
     def __init__(self, table_name):
