@@ -1,8 +1,6 @@
 import asyncpg
 import asyncio
 
-from unicodedata import category
-
 from Data_bases.repositories_sql.base_repository import BaseRepository
 
 class SQLRepository(BaseRepository):
@@ -38,15 +36,15 @@ class SQLRepository(BaseRepository):
         await conn.close()
         return dict(result) if result else None
 
-    async def read(self) -> list[dict]:
+    async def read(self, record_id: int, category: str, name: str, gpa: float, study_year: int):
         conn = await self.get_connection()
         query = '''
         SELECT id, category, name, gpa, study_year
         FROM people2;
         '''
-        results = await conn.fetch(query)
+        results = await conn.fetch(query, record_id, category, name, gpa, study_year)
         await conn.close()
-        print(results)
+        return (results)
 
     async def delete(self, record_id: int):
         conn = await self.get_connection()
@@ -60,5 +58,6 @@ class SQLRepository(BaseRepository):
 
 if __name__ == "__main__":
     repo = SQLRepository("people2")
-    asyncio.run(repo.delete(8))
-    ""","student","Alex",4,1))"""
+    asyncio.run(repo.read())
+    """delete(8))
+    ,"student","Alex",4,1))"""
