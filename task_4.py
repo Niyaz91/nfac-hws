@@ -1,16 +1,12 @@
-def app(environ, start_response):
-    path = environ.get('PATH_INFO', '')
-    method = environ.get('REQUEST_METHOD', '')
+from flask import Flask, jsonify
 
-    if path == '/meaning-of-life' and method == 'POST':
-        response_body = '{"meaning": "42"}'
-        status = '200 OK'
-        headers = [('Content-type', 'application/json')]
-    else:
-        response_body = '{"error": "Not Found"}'
-        status = '404 Not Found'
-        headers = [('Content-type', 'application/json')]
+app = Flask(__name__)
 
-    start_response(status, headers)
-    return [response_body.encode('utf-8')]
+@app.route('/meaning-of-life', methods=['POST'])
+def meaning_of_life():
+    return jsonify({"meaning": "42"})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
 
