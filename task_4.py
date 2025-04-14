@@ -1,12 +1,7 @@
-from flask import Flask, jsonify
+from fastapi import FastAPI
 
-app = Flask(__name__)
+app = FastAPI()
 
-@app.route('/meaning-of-life', methods=['POST'])
+@app.post("/meaning-of-life")
 def meaning_of_life():
-    return jsonify({"meaning": "42"})
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-
+    return {"meaning": "42"}
