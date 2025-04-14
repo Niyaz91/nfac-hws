@@ -1,0 +1,15 @@
+<form method="POST" action="{{ url_for('create_book') }}">
+    <label>Title:</label>
+    <input type="text" name="title" required><br>
+
+    <label>Author:</label>
+    <input type="text" name="author" required><br>
+
+    <label>Year:</label>
+    <input type="number" name="year" required><br>
+
+    <label>Description:</label>
+    <textarea name="description" required></textarea><br>
+
+    <button type="submit">Save</button>
+</form>

@@ -2,7 +2,7 @@ import sqlite3
 
 
 def init_db():
-    conn = sqlite3.connect('data.db')
+    conn = sqlite3.connect('books.db')
     cursor = conn.cursor()
 
     cursor.execute('''
