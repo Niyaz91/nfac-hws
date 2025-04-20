@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+textarea {
+    width: 100%;
+    height: 100px;
+}
+
+.comment {
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.comment.positive {
+    background-color: #e0ffe0;
+}
+
+.comment.negative {
+    background-color: #ffe0e0;
+}
+
+.pagination a, .pagination strong {
+    margin: 0 5px;
+    text-decoration: none;
+}
