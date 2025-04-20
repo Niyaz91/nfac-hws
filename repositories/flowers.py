@@ -1,4 +1,3 @@
-# repositories/flowers.py
 from models import Flower
 
 class FlowersRepository:
@@ -6,14 +5,14 @@ class FlowersRepository:
         self.flowers = []
         self.counter = 1
 
-    def add_flower(self, name, quantity, price):
-        flower = Flower(self.counter, name, quantity, price)
+    def add_flower(self, name: str, price: float):
+        flower = Flower(id=self.counter, name=name, price=price)
         self.flowers.append(flower)
         self.counter += 1
-        return flower
+        return flower.id
 
     def list_flowers(self):
         return self.flowers
 
-    def find_by_id(self, id):
-        return next((f for f in self.flowers if f.id == id), None)
+    def get_by_id(self, flower_id: int):
+        return next((f for f in self.flowers if f.id == flower_id), None)

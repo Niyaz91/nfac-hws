@@ -1,21 +1,15 @@
-from pydantic import BaseModel
-from typing import List, Optional
-
 class User:
-    def __init__(self, id, email, name, password, photo=None):
-        self.id = id
-        self.email = email
-        self.name = name
-        self.password = password
+    def __init__(self, username, password_hash, photo: bytes = None):
+        self.username = username
+        self.password_hash = password_hash
 
 class Flower:
-    def __init__(self, id, name, quantity, price):
+    def __init__(self, id: int, name: str, price: float):
         self.id = id
         self.name = name
-        self.quantity = quantity
         self.price = price
 
 class Purchase:
-    def __init__(self, user_id, flower_id):
+    def __init__(self, user_id: str, flower_id: int):
         self.user_id = user_id
         self.flower_id = flower_id

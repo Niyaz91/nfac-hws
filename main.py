@@ -1,96 +1,126 @@
-from fastapi import FastAPI, Form, Request, Response, Depends, UploadFile, File
-from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
-from auth import create_jwt, get_user_id_from_jwt
+from fastapi import FastAPI, UploadFile, Form, Depends, HTTPException, status
 from repositories.users import UsersRepository
-from repositories.flowers import FlowersRepository
-from repositories.purchases import PurchasesRepository
+from auth import create_token, verify_token, oauth2_scheme
+import hashlib
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
-
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
 users_repo = UsersRepository()
-flowers_repo = FlowersRepository()
-purchases_repo = PurchasesRepository()
 
-### --- AUTH ---
-@app.get("/signup", response_class=HTMLResponse)
-async def get_signup(request: Request):
-    return templates.TemplateResponse("signup.html", {"request": request})
+def hash_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
 
 @app.post("/signup")
-async def post_signup(request: Request, email: str = Form(), name: str = Form(), password: str = Form()):
-    filename = None
-    users_repo.add_user(email, name, password)
-    return RedirectResponse("/login", status_code=302)
-
-@app.get("/login", response_class=HTMLResponse)
-async def get_login(request: Request):
-    return templates.TemplateResponse("login.html", {"request": request})
+async def signup(username: str = Form(), password: str = Form()):
+    try:
+        users_repo.add_user(username, hash_password(password))
+    except ValueError:
+        raise HTTPException(status_code=400, detail="User already exists")
+    return {"message": "Registered"}
 
 @app.post("/login")
-async def post_login(response: Response, email: str = Form(), password: str = Form()):
-    user = users_repo.find_by_email(email)
-    if user and user.password == password:
-        token = create_jwt(user.id)
-        response = RedirectResponse("/profile", status_code=302)
-        response.set_cookie("token", token)
-        return response
-    return RedirectResponse("/login", status_code=302)
+def login(username: str = Form(), password: str = Form()):
+    user = users_repo.get_user(username)
+    if not user or user.password_hash != hash_password(password):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    token = create_token({"sub": username})
+    return {"access_token": token, "type": "bearer"}
 
-@app.get("/profile", response_class=HTMLResponse)
-async def get_profile(request: Request):
-    user_id = get_user_id_from_jwt(request)
-    user = users_repo.find_by_id(user_id)
-    return templates.TemplateResponse("profile.html", {"request": request, "user": user})
+@app.get("/profile")
+def profile(token: str = Depends(oauth2_scheme)):
+    username = verify_token(token)
+    if not username:
+        raise HTTPException(status_code=401, detail="Invalid token")
+    user = users_repo.get_user(username)
+    print("DEBUG: user object:", user)
 
-### --- FLOWERS ---
-@app.get("/flowers", response_class=HTMLResponse)
-async def get_flowers(request: Request):
-    flowers = flowers_repo.list_flowers()
-    return templates.TemplateResponse("flowers.html", {"request": request, "flowers": flowers})
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    return {
+        "username": user.username,
+    }
+
+from repositories.flowers import FlowersRepository
+from schemas import Flower
+from fastapi import Form
+
+flowers_repo = FlowersRepository()
 
 @app.post("/flowers")
-async def post_flower(name: str = Form(), quantity: int = Form(), price: float = Form()):
-    flowers_repo.add_flower(name, quantity, price)
-    return RedirectResponse("/flowers", status_code=302)
+def add_flower(name: str = Form(), price: float = Form()):
+    flower_id = flowers_repo.add_flower(name, price)
+    return {"id": flower_id}
 
-### --- CART ---
+@app.get("/flowers", response_model=list[Flower])
+def get_flowers():
+    return flowers_repo.list_flowers()
+
+from fastapi import Cookie, Response, Request
+import json
+
+def get_cart_from_cookie(cart_cookie: str | None) -> list[int]:
+    if not cart_cookie:
+        return []
+    try:
+        return json.loads(cart_cookie)
+    except:
+        return []
+
 @app.post("/cart/items")
-async def add_to_cart(response: Response, request: Request, flower_id: int = Form()):
-    cart = request.cookies.get("cart", "")
-    cart_items = cart.split(",") if cart else []
-    cart_items.append(str(flower_id))
-    response = RedirectResponse("/flowers", status_code=302)
-    response.set_cookie("cart", ",".join(cart_items))
-    return response
+def add_to_cart(
+    request: Request,
+    response: Response,
+    flower_id: int = Form(),
+    cart: str = Cookie(default=None)
+):
+    cart_items = get_cart_from_cookie(cart)
+    cart_items.append(flower_id)
+    response.set_cookie(key="cart", value=json.dumps(cart_items))
+    return {"message": "Item added to cart"}
 
-@app.get("/cart/items", response_class=HTMLResponse)
-async def get_cart_items(request: Request):
-    cart = request.cookies.get("cart", "")
-    ids = list(map(int, cart.split(","))) if cart else []
-    items = [flowers_repo.find_by_id(i) for i in ids]
-    total = sum(f.price for f in items if f)
-    return templates.TemplateResponse("cart.html", {"request": request, "items": items, "total": total})
+@app.get("/cart/items")
+def get_cart_items(cart: str = Cookie(default=None)):
+    cart_items = get_cart_from_cookie(cart)
+    flowers = [flowers_repo.get_by_id(fid) for fid in cart_items if flowers_repo.get_by_id(fid)]
+    total = sum(f.price for f in flowers)
+    return {
+        "items": [{"id": f.id, "name": f.name, "price": f.price} for f in flowers],
+        "total_price": total
+    }
 
-### --- PURCHASED ---
+from repositories.purchases import PurchasesRepository
+
+purchases_repo = PurchasesRepository()
+
 @app.post("/purchased")
-async def post_purchased(request: Request, response: Response):
-    user_id = get_user_id_from_jwt(request)
-    cart = request.cookies.get("cart", "")
-    ids = list(map(int, cart.split(","))) if cart else []
-    for i in ids:
-        purchases_repo.add_purchase(user_id, i)
-    response = RedirectResponse("/purchased", status_code=302)
-    response.set_cookie("cart", "")  # clear cart
-    return response
+def purchase_items(
+    request: Request,
+    response: Response,
+    token: str = Depends(oauth2_scheme),
+    cart: str = Cookie(default=None)
+):
+    username = verify_token(token)
+    if not username:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
-@app.get("/purchased", response_class=HTMLResponse)
-async def get_purchased(request: Request):
-    user_id = get_user_id_from_jwt(request)
-    purchases = purchases_repo.get_user_purchases(user_id)
-    flowers = [flowers_repo.find_by_id(p.flower_id) for p in purchases]
-    return templates.TemplateResponse("purchased.html", {"request": request, "flowers": flowers})
+    cart_items = get_cart_from_cookie(cart)
+    for fid in cart_items:
+        purchases_repo.add_purchase(username, fid)
+
+    response.set_cookie(key="cart", value=json.dumps([]))  # Очистить корзину
+    return {"message": "Items purchased"}
+
+@app.get("/purchased")
+def get_purchased(token: str = Depends(oauth2_scheme)):
+    username = verify_token(token)
+    if not username:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    user_purchases = purchases_repo.get_user_purchases(username)
+    flower_objs = [flowers_repo.get_by_id(p.flower_id) for p in user_purchases]
+    return [{
+        "name": f.name,
+        "price": f.price
+    } for f in flower_objs if f]
+
+
