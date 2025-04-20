@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head><title>Профиль</title></head>
+<body>
+  <h1>Привет, {{ user.name }}</h1>
+  <p>Email: {{ user.email }}</p>
+  {% if user.photo %}
+    <img src="/{{ user.photo }}" alt="Фото пользователя" width="150">
+  {% endif %}
+  <p><a href="/flowers">Перейти к цветам</a></p>
+  <p><a href="/cart/items">Корзина</a></p>
+  <p><a href="/purchased">Купленные цветы</a></p>
+</body>
+</html>
