@@ -7,3 +7,8 @@ pytz==2024.2
 requests==2.32.3
 soaplib==1.0.0
 urllib3==2.3.0
+fastapi
+sqlalchemy
+uvicorn
+alembic
+pydantic
