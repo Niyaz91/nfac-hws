@@ -1,0 +1,16 @@
+### GET /index (имитация HTTP/1.0)
+GET http://localhost:8000/index HTTP/1.0
+
+### POST /api/login
+POST http://localhost:8000/api/login
+Content-Type: application/x-www-form-urlencoded
+
+username=Alice&password=secret
+
+### GET /home
+GET http://example.com/home
+
+### GET /data с Accept
+GET http://example.com/data
+Accept: application/json
+ппш
