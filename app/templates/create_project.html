@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create New Project</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f9ff;
+      color: #333;
+      padding: 40px;
+    }
+
+    h2 {
+      color: #1a4b7b;
+    }
+
+    form {
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 600px;
+    }
+
+    input[type="text"],
+    input[type="datetime-local"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .member-checkboxes {
+      margin-bottom: 20px;
+    }
+
+    .member-checkboxes label {
+      font-weight: normal;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    button {
+      background-color: #1a4b7b;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #163a61;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 20px;
+      color: #1a4b7b;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Create New Project</h2>
+
+  <form method="post">
+    <label for="name">Project Name</label>
+    <input type="text" id="name" name="name" placeholder="Project Name" required>
+
+    <label for="description">Description</label>
+    <textarea id="description" name="description" placeholder="Project description..."></textarea>
+
+    <label for="deadline">Deadline (optional)</label>
+    <input type="date" id="deadline" name="deadline">
+
+    <label>Members:</label>
+    <div class="member-checkboxes">
+      {% for user in users %}
+        <label><input type="checkbox" name="members" value="{{ user.id }}"> {{ user.username }}</label>
+      {% endfor %}
+    </div>
+
+    <button type="submit">Create</button>
+  </form>
+
+  <a href="/projects">Back to Projects</a>
+
+</body>
+</html>
